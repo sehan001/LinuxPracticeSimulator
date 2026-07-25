@@ -69,7 +69,13 @@
               </button>
             </div>
           </div>
+          <button id="layout-btn" title="Switch between combined split view and separate Terminal / File Manager tabs">⬒ SEPARATE TABS</button>
           <button id="restart-btn" title="Restart session — clears all files, history and output">⟳ RESTART</button>
+          <div class="window-controls">
+            <button id="min-btn" class="win-btn win-min" title="Minimize window">&#9866;</button>
+            <button id="max-btn" class="win-btn win-max" title="Maximize window">&#9723;</button>
+            <button id="close-btn" class="win-btn win-close" title="Close and end session">&#10005;</button>
+          </div>
         </div>
       </div>
 
@@ -85,6 +91,10 @@
 
       <!-- ===================== WORKSPACE TAB (Terminal | File Manager, resizable) ===================== -->
       <div id="workspace-tab" class="tab-panel active">
+        <div id="workspace-subtabs" class="workspace-subtabs hidden">
+          <button class="subtab-btn active" data-subtab="terminal-pane"><span class="tab-icon">&gt;_</span> Terminal</button>
+          <button class="subtab-btn" data-subtab="filemanager-pane"><span class="tab-icon">▤</span> File Manager</button>
+        </div>
         <div id="workspace-split" class="workspace-split">
 
           <!-- Terminal pane -->
@@ -142,9 +152,30 @@
         </div>
       </div>
 
+      <!-- Drag-to-resize handles for the whole terminal window -->
+      <div class="resize-handle resize-e" data-dir="e" title="Drag to resize width"></div>
+      <div class="resize-handle resize-s" data-dir="s" title="Drag to resize height"></div>
+      <div class="resize-handle resize-se" data-dir="se" title="Drag to resize"></div>
+
     </div>
 
     <div class="footer-note">Linux Practice Terminal &mdash; a browser-based simulator for learning purposes only. No real system is affected.</div>
+  </div>
+
+  <!-- ============ MINIMIZED BAR (shown when window is minimized) ============ -->
+  <div id="minimized-bar" class="minimized-bar hidden">
+    <button id="restore-btn" title="Restore window">&gt;_ Linux Practice Terminal <span class="minimized-hint">(minimized — click to restore)</span></button>
+  </div>
+
+  <!-- ============ CONFIRM MODAL (replaces native confirm()/alert()) ============ -->
+  <div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <p id="confirm-modal-message" class="modal-message"></p>
+      <div class="modal-actions">
+        <button id="confirm-modal-cancel" class="modal-btn modal-btn-secondary">Cancel</button>
+        <button id="confirm-modal-confirm" class="modal-btn modal-btn-danger">Confirm</button>
+      </div>
+    </div>
   </div>
 
 <script src="script.js"></script>

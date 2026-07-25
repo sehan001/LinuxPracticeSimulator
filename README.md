@@ -58,13 +58,28 @@ includes:
   the Terminal tab and pre-fills the example command)
 
 ### Title bar controls
-- **⟳ RESTART** — wipes the virtual filesystem, command history, environment
-  variables and terminal output back to the original starting state (with a
-  confirmation prompt first, since it's destructive to anything you built).
 - **🎨 THEME** — opens a dropdown to switch the terminal's color palette and
   border style: Classic Mono (default, matches the original brief), Hacker
   Green, Amber Retro, Cyberpunk Neon, and Matrix Rain (adds an animated
   falling-code background, similar to classic "hacker terminal" widgets).
+- **⬒ SEPARATE TABS / SPLIT VIEW** — toggles whether the Terminal and File
+  Manager live side-by-side in one combined view (default), or as two
+  separate sub-tabs you switch between one at a time.
+- **⟳ RESTART** — wipes the virtual filesystem, command history, environment
+  variables and terminal output back to the original starting state. Uses
+  the app's own in-page confirm dialog (not the browser's native
+  `confirm()`) since it's destructive to anything you built.
+- **Window controls (▭ / □ / ✕)** — browser/OS-style minimize, maximize and
+  close buttons for the terminal window itself:
+  - **Minimize** tucks the window away behind a small "click to restore"
+    bar in the corner.
+  - **Maximize** expands the window to fill the browser viewport; click
+    again to restore its previous size.
+  - **Close (✕)** ends the practice session (after confirming in the same
+    in-page dialog used by Restart) and returns you to the start screen.
+- **Resizable window** — drag the right edge, bottom edge, or bottom-right
+  corner of the terminal window itself to resize it freely, independent of
+  the internal Terminal ↔ File Manager split divider.
 
 ### 3. File Manager pane
 Shows name, type, permissions, size, and modified date for the current

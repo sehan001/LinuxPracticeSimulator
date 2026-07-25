@@ -1024,8 +1024,7 @@ function restartSession() {
 }
 
 document.getElementById('restart-btn').addEventListener('click', () => {
-  const ok = window.confirm('Restart session? This clears all files you created, command history, and terminal output.');
-  if (ok) restartSession();
+  showConfirm('Restart session? This clears all files you created, command history, and terminal output.', restartSession);
 });
 
 /* ============================================================
@@ -1168,5 +1167,211 @@ function stopMatrixRain() {
   window.addEventListener('resize', () => {
     leftPane.style.flex = '';
     rightPane.style.flex = '';
+  });
+})();
+
+/* ============================================================
+   15. CUSTOM CONFIRM MODAL
+   Replaces window.confirm()/alert() with an in-page dialog that
+   matches the terminal's own look and feel.
+   ============================================================ */
+
+const confirmModal = document.getElementById('confirm-modal');
+const confirmModalMessage = document.getElementById('confirm-modal-message');
+const confirmModalConfirmBtn = document.getElementById('confirm-modal-confirm');
+const confirmModalCancelBtn = document.getElementById('confirm-modal-cancel');
+let pendingConfirmAction = null;
+
+function showConfirm(message, onConfirm) {
+  confirmModalMessage.textContent = message;
+  pendingConfirmAction = onConfirm;
+  confirmModal.classList.remove('hidden');
+  confirmModalConfirmBtn.focus();
+}
+
+function hideConfirm() {
+  confirmModal.classList.add('hidden');
+  pendingConfirmAction = null;
+}
+
+confirmModalConfirmBtn.addEventListener('click', () => {
+  const action = pendingConfirmAction;
+  hideConfirm();
+  if (action) action();
+});
+
+confirmModalCancelBtn.addEventListener('click', hideConfirm);
+
+confirmModal.addEventListener('click', (e) => {
+  if (e.target === confirmModal) hideConfirm();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !confirmModal.classList.contains('hidden')) hideConfirm();
+});
+
+/* ============================================================
+   16. WINDOW CONTROLS — minimize / maximize / close
+   Behaves like a browser/OS window: minimize tucks the terminal
+   away behind a small restore bar, maximize expands it to fill
+   the viewport, and close ends the practice session (with a
+   confirmation) and returns to the start screen.
+   ============================================================ */
+
+const terminalWindowEl = document.querySelector('.terminal-window');
+const minBtn = document.getElementById('min-btn');
+const maxBtn = document.getElementById('max-btn');
+const closeBtn = document.getElementById('close-btn');
+const minimizedBar = document.getElementById('minimized-bar');
+const restoreBtn = document.getElementById('restore-btn');
+
+minBtn.addEventListener('click', () => {
+  terminalWindowEl.classList.add('hidden');
+  minimizedBar.classList.remove('hidden');
+});
+
+restoreBtn.addEventListener('click', () => {
+  terminalWindowEl.classList.remove('hidden');
+  minimizedBar.classList.add('hidden');
+  document.getElementById('terminal-input').focus();
+});
+
+let isMaximized = false;
+maxBtn.addEventListener('click', () => {
+  isMaximized = !isMaximized;
+  terminalWindowEl.classList.toggle('maximized', isMaximized);
+  if (isMaximized) {
+    maxBtn.innerHTML = '&#10064;';
+    maxBtn.title = 'Restore window';
+  } else {
+    maxBtn.innerHTML = '&#9723;';
+    maxBtn.title = 'Maximize window';
+    // drop any manual width/height set by the drag-to-resize handles
+    terminalWindowEl.style.width = '';
+    terminalWindowEl.style.height = '';
+  }
+});
+
+closeBtn.addEventListener('click', () => {
+  showConfirm('End this practice session? This clears the terminal and file manager and returns you to the start screen.', () => {
+    restartSession();
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('disclaimer-overlay').classList.remove('hidden');
+  });
+});
+
+/* ============================================================
+   17. DRAG-TO-RESIZE THE WHOLE TERMINAL WINDOW
+   Drag the right edge, bottom edge, or corner to resize the
+   window itself (separate from the internal terminal/file
+   manager split).
+   ============================================================ */
+
+(function initWindowResize() {
+  const handles = document.querySelectorAll('.resize-handle');
+  let dir = null, startX = 0, startY = 0, startW = 0, startH = 0;
+
+  function onDown(e) {
+    if (terminalWindowEl.classList.contains('maximized')) return;
+    dir = e.currentTarget.dataset.dir;
+    const rect = terminalWindowEl.getBoundingClientRect();
+    startW = rect.width;
+    startH = rect.height;
+    const point = e.touches ? e.touches[0] : e;
+    startX = point.clientX;
+    startY = point.clientY;
+    terminalWindowEl.style.maxWidth = 'none';
+    document.body.classList.add('resizing-window');
+    e.preventDefault();
+  }
+
+  function onMove(e) {
+    if (!dir) return;
+    const point = e.touches ? e.touches[0] : e;
+    const dx = point.clientX - startX;
+    const dy = point.clientY - startY;
+
+    if (dir.includes('e')) {
+      const w = Math.max(480, Math.min(window.innerWidth - 32, startW + dx));
+      terminalWindowEl.style.width = w + 'px';
+    }
+    if (dir.includes('s')) {
+      const h = Math.max(360, Math.min(window.innerHeight - 32, startH + dy));
+      terminalWindowEl.style.height = h + 'px';
+    }
+  }
+
+  function onUp() {
+    dir = null;
+    document.body.classList.remove('resizing-window');
+  }
+
+  handles.forEach(h => {
+    h.addEventListener('mousedown', onDown);
+    h.addEventListener('touchstart', onDown, { passive: false });
+  });
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+})();
+
+/* ============================================================
+   18. LAYOUT TOGGLE — combined split view vs. separate tabs
+   Lets the user choose whether Terminal + File Manager live
+   side-by-side in one view (default) or as two separate
+   sub-tabs they switch between.
+   ============================================================ */
+
+(function initLayoutToggle() {
+  const layoutBtn = document.getElementById('layout-btn');
+  const workspaceSubtabs = document.getElementById('workspace-subtabs');
+  const workspaceSplitEl = document.getElementById('workspace-split');
+  const terminalPaneEl = document.getElementById('terminal-pane');
+  const filemanagerPaneEl = document.getElementById('filemanager-pane');
+  const splitResizerEl = document.getElementById('split-resizer');
+  const subtabBtns = document.querySelectorAll('.subtab-btn');
+
+  let layoutMode = 'split'; // 'split' | 'separate'
+  let currentSubtab = 'terminal-pane';
+
+  function showSubtab(id) {
+    currentSubtab = id;
+    [terminalPaneEl, filemanagerPaneEl].forEach(p => {
+      p.classList.toggle('subtab-hidden', p.id !== id);
+    });
+    subtabBtns.forEach(b => b.classList.toggle('active', b.dataset.subtab === id));
+    if (id === 'filemanager-pane') {
+      renderFileManager();
+    } else {
+      document.getElementById('terminal-input').focus();
+    }
+  }
+
+  function applyLayout() {
+    if (layoutMode === 'separate') {
+      workspaceSubtabs.classList.remove('hidden');
+      splitResizerEl.classList.add('hidden');
+      showSubtab(currentSubtab);
+      layoutBtn.textContent = '⬒ SPLIT VIEW';
+      layoutBtn.title = 'Switch to combined split view';
+    } else {
+      workspaceSubtabs.classList.add('hidden');
+      splitResizerEl.classList.remove('hidden');
+      terminalPaneEl.classList.remove('subtab-hidden');
+      filemanagerPaneEl.classList.remove('subtab-hidden');
+      layoutBtn.textContent = '⬒ SEPARATE TABS';
+      layoutBtn.title = 'Switch between combined split view and separate Terminal / File Manager tabs';
+      renderFileManager();
+    }
+  }
+
+  layoutBtn.addEventListener('click', () => {
+    layoutMode = layoutMode === 'split' ? 'separate' : 'split';
+    applyLayout();
+  });
+
+  subtabBtns.forEach(btn => {
+    btn.addEventListener('click', () => showSubtab(btn.dataset.subtab));
   });
 })();
