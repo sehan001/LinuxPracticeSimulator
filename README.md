@@ -46,6 +46,15 @@ includes:
 - Real usage examples (with a **"Try in Terminal"** button that jumps to
   the Terminal tab and pre-fills the example command)
 
+### Title bar controls
+- **⟳ RESTART** — wipes the virtual filesystem, command history, environment
+  variables and terminal output back to the original starting state (with a
+  confirmation prompt first, since it's destructive to anything you built).
+- **🎨 THEME** — opens a dropdown to switch the terminal's color palette and
+  border style: Classic Mono (default, matches the original brief), Hacker
+  Green, Amber Retro, Cyberpunk Neon, and Matrix Rain (adds an animated
+  falling-code background, similar to classic "hacker terminal" widgets).
+
 ### 3. File Manager
 A read-only visual browser for the same virtual filesystem the Terminal tab
 operates on. It shows name, type, permissions, size, and modified date, and

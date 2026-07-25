@@ -49,8 +49,9 @@ const FS = {
   root: makeDir('drwxr-xr-x')
 };
 
-// seed a realistic starter tree
-(function seedFS() {
+// seed a realistic starter tree — also called again on RESTART
+function seedFS() {
+  FS.root = makeDir('drwxr-xr-x');
   const root = FS.root;
   root.children['home'] = makeDir();
   root.children['home'].children['student'] = makeDir();
@@ -93,7 +94,8 @@ for a full reference of Linux commands with examples.
   root.children['bin'] = makeDir();
   root.children['usr'] = makeDir();
   root.children['tmp'] = makeDir('drwxrwxrwx');
-})();
+}
+seedFS();
 
 let cwdPath = ['home', 'student']; // path segments from root
 
@@ -990,3 +992,112 @@ document.getElementById('fm-up-btn').addEventListener('click', () => {
   renderFileManager();
 });
 document.getElementById('fm-refresh-btn').addEventListener('click', renderFileManager);
+
+/* ============================================================
+   11. RESTART SESSION
+   Rebuilds the virtual filesystem, clears history/env/aliases,
+   resets the prompt, and clears both the terminal and file manager views.
+   ============================================================ */
+
+function restartSession() {
+  seedFS();
+  cwdPath = ['home', 'student'];
+  fmPath = ['home', 'student'];
+  shellState.history = [];
+  historyIdx = -1;
+  shellState.env = { USER: 'student', HOME: '/home/student', SHELL: '/bin/bash', PATH: '/usr/local/bin:/usr/bin:/bin' };
+  shellState.aliases = { ll: 'ls -la', la: 'ls -a' };
+
+  outputEl.innerHTML = '';
+  appendLine('Session restarted — filesystem, history and environment reset to defaults.', 'line-sys');
+  appendLine(`Linux Practice Terminal — simulated shell. Type <b>help</b> to get started, or open the "All Commands" tab.`, 'line-sys');
+  appendLine('', 'line-out');
+
+  updatePromptLabel();
+  inputEl.value = '';
+  renderFileManager();
+  inputEl.focus();
+}
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  const ok = window.confirm('Restart session? This clears all files you created, command history, and terminal output.');
+  if (ok) restartSession();
+});
+
+/* ============================================================
+   12. THEME SWITCHER (color palette + border style)
+   ============================================================ */
+
+const themeBtn = document.getElementById('theme-btn');
+const themeMenu = document.getElementById('theme-menu');
+
+themeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  themeMenu.classList.toggle('hidden');
+});
+
+document.addEventListener('click', (e) => {
+  if (!themeMenu.classList.contains('hidden') && !themeMenu.contains(e.target) && e.target !== themeBtn) {
+    themeMenu.classList.add('hidden');
+  }
+});
+
+document.querySelectorAll('.theme-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const theme = btn.dataset.theme;
+    applyTheme(theme);
+    document.querySelectorAll('.theme-option').forEach(b => b.classList.toggle('selected', b === btn));
+    themeMenu.classList.add('hidden');
+  });
+});
+
+function applyTheme(theme) {
+  if (theme === 'mono') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', theme);
+
+  if (theme === 'matrix') startMatrixRain();
+  else stopMatrixRain();
+}
+
+/* ============================================================
+   13. MATRIX RAIN BACKGROUND (used by the "Matrix Rain" theme)
+   ============================================================ */
+
+const matrixCanvas = document.getElementById('matrix-canvas');
+const mCtx = matrixCanvas.getContext('2d');
+let matrixAnimId = null;
+let matrixColumns = [];
+const matrixChars = 'アイウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+function sizeMatrixCanvas() {
+  matrixCanvas.width = window.innerWidth;
+  matrixCanvas.height = window.innerHeight;
+  const cols = Math.floor(matrixCanvas.width / 16);
+  matrixColumns = new Array(cols).fill(0).map(() => Math.random() * -100);
+}
+window.addEventListener('resize', () => { if (document.documentElement.dataset.theme === 'matrix') sizeMatrixCanvas(); });
+
+function drawMatrixFrame() {
+  mCtx.fillStyle = 'rgba(1,4,1,0.08)';
+  mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+  mCtx.fillStyle = '#00ff41';
+  mCtx.font = '14px monospace';
+  matrixColumns.forEach((y, i) => {
+    const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+    mCtx.fillText(char, i * 16, y);
+    matrixColumns[i] = y > matrixCanvas.height && Math.random() > 0.975 ? 0 : y + 16;
+  });
+  matrixAnimId = requestAnimationFrame(drawMatrixFrame);
+}
+
+function startMatrixRain() {
+  if (matrixAnimId) return;
+  sizeMatrixCanvas();
+  mCtx.fillStyle = '#010401';
+  mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+  matrixAnimId = requestAnimationFrame(drawMatrixFrame);
+}
+
+function stopMatrixRain() {
+  if (matrixAnimId) { cancelAnimationFrame(matrixAnimId); matrixAnimId = null; }
+}

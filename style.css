@@ -23,6 +23,76 @@ html, body {
   height: 100%;
 }
 
+/* ==========================================================================
+   THEME PRESETS
+   Default (no data-theme attr, or data-theme="mono") = original B&W clone.
+   Selecting a theme in the title-bar THEME menu overrides these variables.
+   ========================================================================== */
+
+html[data-theme="hacker-green"] {
+  --black: #020a02;
+  --near-black: #04140a;
+  --panel: #06210e;
+  --border: #0f5c2a;
+  --border-light: #2ee06a;
+  --white: #39ff6a;
+  --dim: #2ecb57;
+  --dimmer: #1f8a3c;
+  --btn-radius: 0px;
+  --win-glow: 0 0 22px rgba(57,255,106,0.35), 0 0 0 1px #000;
+}
+
+html[data-theme="amber"] {
+  --black: #0a0602;
+  --near-black: #150d04;
+  --panel: #201607;
+  --border: #7a4a00;
+  --border-light: #ffb000;
+  --white: #ffb000;
+  --dim: #cc8e00;
+  --dimmer: #8f6300;
+  --btn-radius: 0px;
+  --win-glow: 0 0 22px rgba(255,176,0,0.30), 0 0 0 1px #000;
+}
+
+html[data-theme="cyberpunk"] {
+  --black: #06021a;
+  --near-black: #0c0728;
+  --panel: #140b3a;
+  --border: #3a2a70;
+  --border-light: #39f6ff;
+  --white: #7ef9ff;
+  --dim: #9a86ff;
+  --dimmer: #6a58b0;
+  --btn-radius: 8px;
+  --win-glow: 0 0 24px rgba(57,246,255,0.30), 0 0 46px rgba(255,43,214,0.18), 0 0 0 1px #000;
+}
+
+html[data-theme="matrix"] {
+  --black: #010401;
+  --near-black: rgba(3, 15, 6, 0.88);
+  --panel: rgba(4, 20, 8, 0.9);
+  --border: #0f5c2a;
+  --border-light: #00ff41;
+  --white: #6dffa0;
+  --dim: #37c96a;
+  --dimmer: #1f8a3c;
+  --btn-radius: 0px;
+  --win-glow: 0 0 30px rgba(0,255,65,0.4), 0 0 0 1px #000;
+}
+
+html[data-theme="hacker-green"] .terminal-window,
+html[data-theme="amber"] .terminal-window,
+html[data-theme="cyberpunk"] .terminal-window,
+html[data-theme="matrix"] .terminal-window {
+  box-shadow: var(--win-glow);
+  border-radius: var(--btn-radius);
+}
+
+html[data-theme="cyberpunk"] .terminal-window {
+  border-color: var(--border-light);
+}
+
 body {
   margin: 0;
   background: var(--black);
@@ -131,6 +201,8 @@ body {
   border: 1px solid var(--border-light);
   background: var(--near-black);
   box-shadow: 0 0 0 1px #000, 0 20px 60px rgba(0,0,0,0.6);
+  border-radius: var(--btn-radius, 0px);
+  transition: box-shadow .2s, border-radius .2s;
 }
 
 /* Title bar */
@@ -164,8 +236,92 @@ body {
   letter-spacing: 0.5px;
 }
 
-.tl-spacer {
-  width: 46px; /* balances the dots so title stays centered */
+.title-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+#theme-btn,
+#restart-btn {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 5px 9px;
+  cursor: pointer;
+  border-radius: var(--btn-radius, 0);
+}
+
+#theme-btn:hover,
+#restart-btn:hover {
+  background: var(--white);
+  color: var(--black);
+  border-color: var(--white);
+}
+
+.theme-switcher {
+  position: relative;
+}
+
+.theme-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--near-black);
+  border: 1px solid var(--border-light);
+  z-index: 50;
+  min-width: 190px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #222;
+  color: var(--white);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 9px 12px;
+  cursor: pointer;
+  text-align: left;
+}
+.theme-option:last-child { border-bottom: none; }
+.theme-option:hover { background: #1a1a1a; }
+.theme-option.selected { background: var(--white); color: var(--black); }
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border: 1px solid #666;
+  display: inline-block;
+}
+.swatch-mono          { background: #f2f2f2; }
+.swatch-hacker-green  { background: #39ff6a; }
+.swatch-amber         { background: #ffb000; }
+.swatch-cyberpunk     { background: linear-gradient(135deg, #39f6ff, #ff2bd6); }
+.swatch-matrix        { background: #00ff41; }
+
+/* ============================== MATRIX RAIN CANVAS ============================== */
+
+#matrix-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: none;
+  background: var(--black);
+}
+
+html[data-theme="matrix"] #matrix-canvas {
+  display: block;
 }
 
 /* Tab bar */

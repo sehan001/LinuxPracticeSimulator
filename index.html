@@ -8,6 +8,8 @@
 </head>
 <body>
 
+  <canvas id="matrix-canvas"></canvas>
+
   <!-- ============ DISCLAIMER OVERLAY ============ -->
   <div id="disclaimer-overlay">
     <div class="disclaimer-box">
@@ -46,7 +48,29 @@
           <span class="dot"></span>
         </div>
         <div class="title-text">student@linux-practice: ~</div>
-        <div class="tl-spacer"></div>
+        <div class="title-actions">
+          <div class="theme-switcher">
+            <button id="theme-btn" title="Change terminal theme &amp; border style">🎨 THEME</button>
+            <div id="theme-menu" class="theme-menu hidden">
+              <button class="theme-option selected" data-theme="mono">
+                <span class="swatch swatch-mono"></span> Classic Mono
+              </button>
+              <button class="theme-option" data-theme="hacker-green">
+                <span class="swatch swatch-hacker-green"></span> Hacker Green
+              </button>
+              <button class="theme-option" data-theme="amber">
+                <span class="swatch swatch-amber"></span> Amber Retro
+              </button>
+              <button class="theme-option" data-theme="cyberpunk">
+                <span class="swatch swatch-cyberpunk"></span> Cyberpunk Neon
+              </button>
+              <button class="theme-option" data-theme="matrix">
+                <span class="swatch swatch-matrix"></span> Matrix Rain
+              </button>
+            </div>
+          </div>
+          <button id="restart-btn" title="Restart session — clears all files, history and output">⟳ RESTART</button>
+        </div>
       </div>
 
       <!-- Tab bar -->
