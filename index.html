@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux Practice Terminal</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ DISCLAIMER OVERLAY ============ -->
+  <div id="disclaimer-overlay">
+    <div class="disclaimer-box">
+      <pre class="ascii-warning">
+ _    _  ___    ____  _   _ ___ _   _  ____ 
+| |  | |/ _ \  |  _ \| \ | |_ _| \ | |/ ___|
+| |/\| | | | | | |_) |  \| || ||  \| | |  _ 
+\  /\  / |_| | |  _ &lt;| |\  || || |\  | |_| |
+ \/  \/ \___/  |_| \_\_| \_|___|_| \_|\____|
+      </pre>
+      <h1>LINUX PRACTICE TERMINAL</h1>
+      <p class="disclaimer-text">
+        This website is a simulated Linux terminal built with HTML, CSS and JavaScript.
+        It is intended <strong>strictly for learning and practice purposes only</strong>.
+      </p>
+      <ul class="disclaimer-points">
+        <li>No real operating system, shell, or server is being accessed.</li>
+        <li>All files, folders and command output are simulated in your browser session.</li>
+        <li>Nothing you do here affects any real machine, network, or data.</li>
+        <li>All state is temporary and resets when you reload the page.</li>
+      </ul>
+      <button id="disclaimer-ok-btn">OK, START PRACTICING</button>
+    </div>
+  </div>
+
+  <!-- ============ MAIN APP (hidden until OK pressed) ============ -->
+  <div id="app" class="hidden">
+
+    <div class="terminal-window">
+
+      <!-- Title bar -->
+      <div class="title-bar">
+        <div class="tl-dots">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <div class="title-text">student@linux-practice: ~</div>
+        <div class="tl-spacer"></div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="terminal-tab">
+          <span class="tab-icon">&gt;_</span> Terminal
+        </button>
+        <button class="tab-btn" data-tab="commands-tab">
+          <span class="tab-icon">☰</span> All Commands
+        </button>
+        <button class="tab-btn" data-tab="filemanager-tab">
+          <span class="tab-icon">▤</span> File Manager
+        </button>
+      </div>
+
+      <!-- ===================== TERMINAL TAB ===================== -->
+      <div id="terminal-tab" class="tab-panel active">
+        <div id="terminal-output" class="terminal-output" tabindex="-1"></div>
+        <div class="terminal-input-line">
+          <span id="prompt-label" class="prompt-label">student@linux-practice:~$</span>
+          <input type="text" id="terminal-input" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus>
+        </div>
+      </div>
+
+      <!-- ===================== COMMANDS TAB ===================== -->
+      <div id="commands-tab" class="tab-panel">
+        <div class="commands-header">
+          <input type="text" id="command-search" placeholder="Search commands (e.g. ls, chmod, grep)...">
+          <select id="category-filter">
+            <option value="all">All Categories</option>
+          </select>
+        </div>
+        <div class="commands-body">
+          <div id="commands-list" class="commands-list"></div>
+          <div id="command-detail" class="command-detail">
+            <p class="placeholder-text">Select a command from the list to view its full details:
+              syntax, description, options, pros, cons and usage examples.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== FILE MANAGER TAB ===================== -->
+      <div id="filemanager-tab" class="tab-panel">
+        <div class="fm-toolbar">
+          <button id="fm-up-btn" title="Go to parent directory">▲ UP</button>
+          <div id="fm-path" class="fm-path">/home/student</div>
+          <button id="fm-refresh-btn" title="Refresh view">⟳ REFRESH</button>
+        </div>
+        <div class="fm-header-row">
+          <span class="fm-col-name">NAME</span>
+          <span class="fm-col-type">TYPE</span>
+          <span class="fm-col-perm">PERMISSIONS</span>
+          <span class="fm-col-size">SIZE</span>
+          <span class="fm-col-mod">MODIFIED</span>
+        </div>
+        <div id="fm-listing" class="fm-listing"></div>
+        <div class="fm-footer">
+          Note: this view reflects the virtual file system used by the Terminal tab.
+          Run commands like <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>cp</code>, <code>mv</code>
+          in the Terminal tab and click REFRESH (or switch tabs) to see the results here.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-note">Linux Practice Terminal &mdash; a browser-based simulator for learning purposes only. No real system is affected.</div>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
