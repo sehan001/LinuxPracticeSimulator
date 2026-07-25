@@ -14,10 +14,21 @@ a safe sandbox for learning Linux commands.
 
 The app opens with a disclaimer screen (click **OK, START PRACTICING** to
 continue), then presents a classic black-and-white terminal window with
-three tabs:
+two tabs: **Terminal + File Manager** (a resizable split view) and
+**All Commands**.
 
-### 1. Terminal
-A working shell prompt (`student@linux-practice:~$`) that supports:
+### 1. Terminal + File Manager (split view)
+The Terminal and File Manager now live side by side in the same tab instead
+of being switched between — no more losing your file view to check a
+command's output.
+- **Drag the vertical divider** between them to resize each pane (becomes a
+  horizontal divider on narrow/mobile screens).
+- The File Manager pane **auto-refreshes after every command**, so creating,
+  deleting, copying, or moving files in the terminal shows up immediately
+  on the right — no manual refresh needed (a REFRESH button is still there
+  if you want it).
+
+**Terminal** supports:
 - Navigation: `pwd`, `cd`, `ls` (`-l`, `-a`, `-la`)
 - File management: `mkdir`, `touch`, `rm`, `rmdir`, `cp`, `mv`, `ln`, `tree`
 - Viewing files: `cat`, `head`, `tail`, `less`, `more`
@@ -55,12 +66,10 @@ includes:
   Green, Amber Retro, Cyberpunk Neon, and Matrix Rain (adds an animated
   falling-code background, similar to classic "hacker terminal" widgets).
 
-### 3. File Manager
-A read-only visual browser for the same virtual filesystem the Terminal tab
-operates on. It shows name, type, permissions, size, and modified date, and
-lets you click into folders. Any changes made via Terminal commands
-(`mkdir`, `touch`, `rm`, `cp`, `mv`, etc.) are reflected here — click
-**REFRESH** or switch tabs to update the view.
+### 3. File Manager pane
+Shows name, type, permissions, size, and modified date for the current
+directory, and lets you click into folders. See the split-view description
+above — it lives right next to the Terminal now, not in a separate tab.
 
 ---
 

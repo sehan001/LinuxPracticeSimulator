@@ -75,23 +75,53 @@
 
       <!-- Tab bar -->
       <div class="tab-bar">
-        <button class="tab-btn active" data-tab="terminal-tab">
-          <span class="tab-icon">&gt;_</span> Terminal
+        <button class="tab-btn active" data-tab="workspace-tab">
+          <span class="tab-icon">&gt;_</span> Terminal + File Manager
         </button>
         <button class="tab-btn" data-tab="commands-tab">
           <span class="tab-icon">☰</span> All Commands
         </button>
-        <button class="tab-btn" data-tab="filemanager-tab">
-          <span class="tab-icon">▤</span> File Manager
-        </button>
       </div>
 
-      <!-- ===================== TERMINAL TAB ===================== -->
-      <div id="terminal-tab" class="tab-panel active">
-        <div id="terminal-output" class="terminal-output" tabindex="-1"></div>
-        <div class="terminal-input-line">
-          <span id="prompt-label" class="prompt-label">student@linux-practice:~$</span>
-          <input type="text" id="terminal-input" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus>
+      <!-- ===================== WORKSPACE TAB (Terminal | File Manager, resizable) ===================== -->
+      <div id="workspace-tab" class="tab-panel active">
+        <div id="workspace-split" class="workspace-split">
+
+          <!-- Terminal pane -->
+          <div id="terminal-pane" class="split-pane">
+            <div class="pane-label">&gt;_ TERMINAL</div>
+            <div id="terminal-output" class="terminal-output" tabindex="-1"></div>
+            <div class="terminal-input-line">
+              <span id="prompt-label" class="prompt-label">student@linux-practice:~$</span>
+              <input type="text" id="terminal-input" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus>
+            </div>
+          </div>
+
+          <!-- Drag handle -->
+          <div id="split-resizer" class="split-resizer" title="Drag to resize"><span class="resizer-grip"></span></div>
+
+          <!-- File manager pane -->
+          <div id="filemanager-pane" class="split-pane">
+            <div class="pane-label">▤ FILE MANAGER</div>
+            <div class="fm-toolbar">
+              <button id="fm-up-btn" title="Go to parent directory">▲ UP</button>
+              <div id="fm-path" class="fm-path">/home/student</div>
+              <button id="fm-refresh-btn" title="Refresh view">⟳ REFRESH</button>
+            </div>
+            <div class="fm-header-row">
+              <span class="fm-col-name">NAME</span>
+              <span class="fm-col-type">TYPE</span>
+              <span class="fm-col-perm">PERMS</span>
+              <span class="fm-col-size">SIZE</span>
+              <span class="fm-col-mod">MODIFIED</span>
+            </div>
+            <div id="fm-listing" class="fm-listing"></div>
+            <div class="fm-footer">
+              Live view of the same virtual filesystem the terminal uses — updates automatically
+              after every command (<code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>cp</code>, <code>mv</code>&hellip;).
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -109,28 +139,6 @@
             <p class="placeholder-text">Select a command from the list to view its full details:
               syntax, description, options, pros, cons and usage examples.</p>
           </div>
-        </div>
-      </div>
-
-      <!-- ===================== FILE MANAGER TAB ===================== -->
-      <div id="filemanager-tab" class="tab-panel">
-        <div class="fm-toolbar">
-          <button id="fm-up-btn" title="Go to parent directory">▲ UP</button>
-          <div id="fm-path" class="fm-path">/home/student</div>
-          <button id="fm-refresh-btn" title="Refresh view">⟳ REFRESH</button>
-        </div>
-        <div class="fm-header-row">
-          <span class="fm-col-name">NAME</span>
-          <span class="fm-col-type">TYPE</span>
-          <span class="fm-col-perm">PERMISSIONS</span>
-          <span class="fm-col-size">SIZE</span>
-          <span class="fm-col-mod">MODIFIED</span>
-        </div>
-        <div id="fm-listing" class="fm-listing"></div>
-        <div class="fm-footer">
-          Note: this view reflects the virtual file system used by the Terminal tab.
-          Run commands like <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>cp</code>, <code>mv</code>
-          in the Terminal tab and click REFRESH (or switch tabs) to see the results here.
         </div>
       </div>
 

@@ -11,6 +11,7 @@ document.getElementById('disclaimer-ok-btn').addEventListener('click', () => {
   document.getElementById('disclaimer-overlay').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('terminal-input').focus();
+  renderFileManager();
 });
 
 /* ============================================================
@@ -22,8 +23,10 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
-    if (btn.dataset.tab === 'filemanager-tab') renderFileManager();
-    if (btn.dataset.tab === 'terminal-tab') document.getElementById('terminal-input').focus();
+    if (btn.dataset.tab === 'workspace-tab') {
+      renderFileManager();
+      document.getElementById('terminal-input').focus();
+    }
   });
 });
 
@@ -776,6 +779,7 @@ function executeLine(line) {
   if (result.err) { appendLine(escapeHtml(result.err), 'line-err'); return; }
   if (result.out) appendLine(escapeHtml(result.out), 'line-out');
   updatePromptLabel();
+  renderFileManager();
 }
 
 inputEl.addEventListener('keydown', (e) => {
@@ -1101,3 +1105,68 @@ function startMatrixRain() {
 function stopMatrixRain() {
   if (matrixAnimId) { cancelAnimationFrame(matrixAnimId); matrixAnimId = null; }
 }
+
+/* ============================================================
+   14. DRAGGABLE SPLIT (Terminal | File Manager)
+   Works both horizontally (desktop, side-by-side) and vertically
+   (narrow screens, stacked) — direction is read from computed flex-direction.
+   ============================================================ */
+
+(function initSplitResizer() {
+  const container = document.getElementById('workspace-split');
+  const resizer = document.getElementById('split-resizer');
+  const leftPane = document.getElementById('terminal-pane');
+  const rightPane = document.getElementById('filemanager-pane');
+  let dragging = false;
+
+  function isRow() {
+    return getComputedStyle(container).flexDirection === 'row';
+  }
+
+  function onPointerDown(e) {
+    dragging = true;
+    resizer.classList.add('dragging');
+    document.body.classList.add('resizing-split');
+    e.preventDefault();
+  }
+
+  function onPointerMove(e) {
+    if (!dragging) return;
+    const rect = container.getBoundingClientRect();
+    const point = e.touches ? e.touches[0] : e;
+
+    if (isRow()) {
+      let leftPx = point.clientX - rect.left;
+      const min = 220, max = rect.width - 220 - resizer.offsetWidth;
+      leftPx = Math.max(min, Math.min(max, leftPx));
+      leftPane.style.flex = `0 0 ${leftPx}px`;
+      rightPane.style.flex = `1 1 auto`;
+    } else {
+      let topPx = point.clientY - rect.top;
+      const min = 140, max = rect.height - 140 - resizer.offsetHeight;
+      topPx = Math.max(min, Math.min(max, topPx));
+      leftPane.style.flex = `0 0 ${topPx}px`;
+      rightPane.style.flex = `1 1 auto`;
+    }
+  }
+
+  function onPointerUp() {
+    if (!dragging) return;
+    dragging = false;
+    resizer.classList.remove('dragging');
+    document.body.classList.remove('resizing-split');
+  }
+
+  resizer.addEventListener('mousedown', onPointerDown);
+  resizer.addEventListener('touchstart', onPointerDown, { passive: false });
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('touchmove', onPointerMove, { passive: false });
+  window.addEventListener('mouseup', onPointerUp);
+  window.addEventListener('touchend', onPointerUp);
+
+  // reset custom sizing when switching between row/column layouts on resize
+  window.addEventListener('resize', () => {
+    leftPane.style.flex = '';
+    rightPane.style.flex = '';
+  });
+})();

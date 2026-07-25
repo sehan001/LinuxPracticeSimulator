@@ -378,10 +378,91 @@ html[data-theme="matrix"] #matrix-canvas {
   display: flex;
 }
 
-/* ============================== TERMINAL TAB ============================== */
+/* ============================== WORKSPACE SPLIT (Terminal | File Manager) ============================== */
+
+.workspace-split {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.split-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#terminal-pane {
+  flex: 1 1 60%;
+}
+
+#filemanager-pane {
+  flex: 1 1 40%;
+  border-left: 1px solid var(--border);
+}
+
+.pane-label {
+  flex-shrink: 0;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--dimmer);
+  background: #161616;
+  border-bottom: 1px solid var(--border);
+  padding: 6px 12px;
+}
+
+.split-resizer {
+  flex-shrink: 0;
+  width: 7px;
+  cursor: col-resize;
+  background: #161616;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.split-resizer:hover,
+.split-resizer.dragging {
+  background: var(--border-light);
+}
+
+.split-resizer .resizer-grip {
+  width: 3px;
+  height: 34px;
+  background: var(--dimmer);
+  border-radius: 2px;
+}
+
+.split-resizer:hover .resizer-grip,
+.split-resizer.dragging .resizer-grip {
+  background: var(--black);
+}
+
+body.resizing-split {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* Inside the panes, strip the old tab-panel-level flex sizing since
+   split-pane now owns layout */
+#terminal-pane .terminal-output {
+  flex: 1;
+}
+#filemanager-pane .fm-listing {
+  flex: 1;
+}
+
+/* ============================== TERMINAL PANE ============================== */
 
 .terminal-output {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 12px 14px;
   white-space: pre-wrap;
@@ -742,6 +823,7 @@ html[data-theme="matrix"] #matrix-canvas {
 
 .fm-listing {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -819,6 +901,33 @@ html[data-theme="matrix"] #matrix-canvas {
   }
   .fm-col-mod, .fm-col-type {
     display: none;
+  }
+  .workspace-split {
+    flex-direction: column;
+  }
+  #terminal-pane, #filemanager-pane {
+    min-width: 0;
+    min-height: 140px;
+  }
+  #filemanager-pane {
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+  .split-resizer {
+    width: auto;
+    height: 10px;
+    cursor: row-resize;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .split-resizer .resizer-grip {
+    width: 34px;
+    height: 3px;
+  }
+  body.resizing-split {
+    cursor: row-resize;
   }
 }
 
