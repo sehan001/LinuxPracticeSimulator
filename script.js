@@ -934,7 +934,12 @@ function selectCommand(name) {
     <button class="cd-try-btn" id="cd-try-btn">TRY IN TERMINAL →</button>
   `;
   document.getElementById('cd-try-btn').addEventListener('click', () => {
-    document.querySelector('.tab-btn[data-tab="terminal-tab"]').click();
+    document.querySelector('.tab-btn[data-tab="workspace-tab"]').click();
+    const workspaceSubtabsEl = document.getElementById('workspace-subtabs');
+    if (workspaceSubtabsEl && !workspaceSubtabsEl.classList.contains('hidden')) {
+      const terminalSubtabBtn = document.querySelector('.subtab-btn[data-subtab="terminal-pane"]');
+      if (terminalSubtabBtn) terminalSubtabBtn.click();
+    }
     inputEl.value = c.examples[0] ? c.examples[0][0] : c.name;
     inputEl.focus();
   });
